@@ -5,12 +5,14 @@
 ## docker Befehle
 
 ```
-# Build
+# Build Image       
 docker build -t nginx-test .
-# Run
+# Run Container
 docker run -d -p 80:80 --name nginx-test-container nginx-test
-# Delete
+# Delete Container
 docker rm -f nginx-test-container
-# Run + Volume
+# Run Container + Volume
 docker run -d -p 80:80 --name nginx-test-container -v $PWD/nginx-volume/:/usr/share/nginx/html/ nginx-test
+# Accsess Container
+docker exec -it nginx-test-container /bin/bash
 ```
