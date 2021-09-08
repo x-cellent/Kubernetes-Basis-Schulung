@@ -2,7 +2,7 @@
 
 ## Namespace
 
-Erstellen Sie einen namespace mit dem namen "schullung" per command line.
+Erstellen Sie einen namespace mit dem namen "training" per command line.
 
 Exportieren sie diesen Namespace als namespace.yaml datei.
 
@@ -11,7 +11,7 @@ Exportieren sie diesen Namespace als namespace.yaml datei.
 wenden sie diese datei an und löschen sie anschliesend den alten namespace
 
 ```
-kubectl create ns schullung
+kubectl create ns training
 kubectl get -o yaml ns schullung > namespace.yaml
 vi namespace.yaml
 kubectl apply -f namespace.yaml
@@ -191,5 +191,4 @@ Gemeinsames anschauen von z.b. bitnami helmcharts
 
 Machen sie das helmchart im ordner "defektes-helmchart" wieder lauffähig. 
 (syntax fehler, fehlende configs, falsche variablennamen, schreibfehler, ...)
-
 

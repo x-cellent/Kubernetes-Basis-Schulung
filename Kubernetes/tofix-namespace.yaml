@@ -1,0 +1,8 @@
+apiVersion: v11
+kind: namespace
+metadata:
+  annotations:
+  test="true"
+  labels:
+     app: nginx_-2
+  name: namespace der bessere
