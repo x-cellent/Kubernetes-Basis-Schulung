@@ -183,23 +183,49 @@ Erstellen Sie einen ingress für den von Ihnen erstellten Service
 
 ## init container
 
+erstellen sie einen init container, der einfach das gleiche volume mountet, und dort nochmal eine zeile hinzufügt, z.b. "init war hier".
+
 ## Sidecar container
+
+erstellen sie einen Zweiten Container für den nginx webserver
+
+dieser soll einfach in die webseite des nginx alle 5 sekunden eine zeile schreiben
+
+der command dafür kann z.b. folgendermaßen aussehen:
+command: ["/bin/sh"]
+args: ["-c", "while true; do echo echo $(date -u) 'Hi I am from Sidecar container' >> /var/log/index.html; sleep 5;done"]
+
+
+ggf. sowas hier als beispiel:
+https://medium.com/bb-tutorials-and-thoughts/kubernetes-learn-sidecar-container-pattern-6d8c21f873d
+
 
 # HELM
 
 ## Helm init
 
-Erstellen sie ein leeres Helm repo
+Erstellen sie ein default Helm repo
+Schauen sie sich den aufbau und die funktuionsweise an
 
 ## Templates kopieren
 
 Kopieren sie die gesamte derzeitige applikation in den Templates ordner und löschen sie die davor darin vorhandenen dateien. 
+webserver deployment + sidecar + init
+service
+ingress
+networkpolicy
+proxy deployment
 
 instalieren sie nun dieses helmchart in das cluster
 
 ## variablen in values rausziehen
 
 Versuchen sie nun die applikation die sie in diesem helmchart verpackt haben, konfigurierbar zu machen. 
+insbesondere sollte folgendes konfigurierbar sein:
+der hostname des ingress objektes
+die images der pods 
+ob eine networkpolicy mitdeployed werden soll
+ob der ingress mitdeployed werden soll
 
 ## Weitere helm charts reviewn
 
