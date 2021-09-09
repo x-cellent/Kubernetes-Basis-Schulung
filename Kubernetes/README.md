@@ -1,3 +1,11 @@
+
+# Vorbereitung:
+
+Cheatsheet: https://kubernetes.io/docs/reference/kubectl/cheatsheet/
+
+kubectl docu: https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#run
+
+
 # Kubernetes cli & yaml
 
 ## Namespace
@@ -19,24 +27,30 @@ kubectl get ns
 kubectl delete ns schullung
 ```
 
+Schauen sie sich nun den folgenden Namespace an und Reperieren sie diesen
+tofix-namespace.yaml
+
+
 ## Pod
 
-Erstellen Sie einen pod mit dem namen "nginx", der ein nginx image startet und auf port 80 lauscht.
+Erstellen Sie einen pod mit dem namen "nginx", der ein nginx image startet und auf port 80 lauscht. 
 
 Exportieren sie diesen pod als pod.yaml datei.
 
 Ändern sie darin den namen zu "webserver"
 
-wenden sie diese datei an und löschen sie anschliesend den alten pod.
+wenden sie diese datei an und löschen sie wenn nötig anschliesend den alten pod "nginx".
 
 ```
-kubectl create pod  schullung
-kubectl get -o yaml pod nginx > pod.yaml
+kubectl run nginx --image=nginx --port=80
+kubectl get -n schulung -o yaml pod nginx > pod.yaml
 vi pod.yaml
 kubectl apply -f pod.yaml -n schulung
 kubectl get pods -n schulung
 kubectl delete pod -n schulung nginx
 ```
+
+Schauen Sie sich nun den pod tofix-pod.yaml an. machen Sie diesen lauffähig.
 
 ## Service
 
@@ -45,7 +59,7 @@ Hinweis: ggf. muss der pod um Labels erweitert werden!
 
 Exportieren sie diesen Service als service.yaml datei.
 
-Ändern sie darin den namen zu "nginx-service" & wenden sie diese datei an und löschen sie anschliesend den alten service.
+Ändern sie darin den namen zu "webserver" & wenden sie diese datei an und löschen sie anschliesend den alten service.
 
 ```
 kubectl expose pod nginx -n schulung --port=8080 --target-port=80 --type=ClusterIp
@@ -166,6 +180,10 @@ können die pods noch miteinander reden?
 
 warum ja/nein?
 was wäre der soll zustand? 
+
+## init container
+
+## Sidecar container
 
 # HELM
 
