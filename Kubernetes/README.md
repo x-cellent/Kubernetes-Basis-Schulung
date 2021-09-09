@@ -5,6 +5,17 @@ Cheatsheet: https://kubernetes.io/docs/reference/kubectl/cheatsheet/
 
 kubectl docu: https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#run
 
+use/install kubernetes:
+install minikube:
+https://www.virtualbox.org/wiki/Linux_Downloads => dpkg -i ...
+https://v1-18.docs.kubernetes.io/docs/tasks/tools/install-minikube/ => --driver=virtualbox
+
+install with kind:
+https://kind.sigs.k8s.io/
+https://itnext.io/starting-local-kubernetes-using-kind-and-docker-c6089acfc1c0
+
+use online clusters:
+https://www.katacoda.com/
 
 # Kubernetes cli & yaml
 
@@ -14,13 +25,13 @@ Erstellen Sie einen namespace mit dem namen "training" per command line.
 
 Exportieren sie diesen Namespace als namespace.yaml datei.
 
-Ändern sie darin den namen zu "schulung"
+Ändern sie darin den namen zu "schulung" 
 
 wenden sie diese datei an und löschen sie anschliesend den alten namespace
 
 ```
 kubectl create ns training
-kubectl get -o yaml ns schullung > namespace.yaml
+kubectl get -o yaml ns training > namespace.yaml
 vi namespace.yaml
 kubectl apply -f namespace.yaml
 kubectl get ns
@@ -29,20 +40,20 @@ kubectl delete ns schullung
 
 Schauen sie sich nun den folgenden Namespace an und Reperieren sie diesen
 tofix-namespace.yaml
-
+Hinweis: schaut euch den von euch erstellten NS an!
 
 ## Pod
 
+Benötigte Befehle/verbs: create, get, apply, delete
 Erstellen Sie einen pod mit dem namen "nginx", der ein nginx image startet und auf port 80 lauscht. 
-
 Exportieren sie diesen pod als pod.yaml datei.
-
 Ändern sie darin den namen zu "webserver"
-
 wenden sie diese datei an und löschen sie wenn nötig anschliesend den alten pod "nginx".
+Schauen Sie sich nun den pod tofix-pod.yaml an. machen Sie diesen lauffähig.
 
 ```
-kubectl run nginx --image=nginx --port=80
+kubectl run -n schulung nginx --image=nginx --port=80 --dry-run -o yaml
+kubectl run -n schulung nginx --image=nginx --port=80
 kubectl get -n schulung -o yaml pod nginx > pod.yaml
 vi pod.yaml
 kubectl apply -f pod.yaml -n schulung
@@ -50,24 +61,14 @@ kubectl get pods -n schulung
 kubectl delete pod -n schulung nginx
 ```
 
-Schauen Sie sich nun den pod tofix-pod.yaml an. machen Sie diesen lauffähig.
-
 ## Service
 
-Erstellen Sie einen Service mit dem namen "nginx", der auf port 8080 lauscht und auf den zuvor erstellten pod loadbalanced. (Expose)
+Benötigte Befehle: expose, get, apply, delete
+Erstellen Sie einen Service mit dem namen "nginx", der auf port 8080 lauscht und auf den zuvor erstellten pod loadbalanced. 
 Hinweis: ggf. muss der pod um Labels erweitert werden!
 
-Exportieren sie diesen Service als service.yaml datei.
-
-Ändern sie darin den namen zu "webserver" & wenden sie diese datei an und löschen sie anschliesend den alten service.
-
 ```
-kubectl expose pod nginx -n schulung --port=8080 --target-port=80 --type=ClusterIp
-kubectl get -o yaml service nginx > service.yaml
-vi service.yaml
-kubectl apply -f pod.yaml -n schulung
-kubectl get service -n schulung
-kubectl delete service -n schulung nginx
+kubectl expose pod webserver -n schulung --port=8080 --target-port=80 --type=ClusterIP
 ```
 
 ## Port Forward
@@ -75,56 +76,31 @@ kubectl delete service -n schulung nginx
 forwarden sie den service nach localhost und greifen sie darauf zu (z.b. mit curl)
 
 ```
-kubectl port-forward service/nginx-service -n schulung 8080:8080
+kubectl port-forward -n schulung service/webserver -n schulung 8080:8080
 curl localhost:8080
 ```
 
-## Deployment
-
-Erstellen Sie ein Deployment des nginx pods mit 3 replicas. 
-
 ## Configurationen & Persistenz
 
+Commands: create, get, apply
+Ressources: Configmap, Pod
 Erstellen Sie eine Configmap mit einer Index.html datei und nutzen sie diese im deployment mit volumemount und volume.
+Hinweis: editieren sie hierfür nach der erstellung der configmap eine pod.yaml, und erweiter sie diesen um "volumeMounts" und "volumes".
 
-pod:
+```bash
+kubectl create cm -n schulung indexhtml --from-file index.html
+kubectl run -n schulung nginx --image=nginx --port=80 --dry-run -o yaml >pod.yaml 
+vi pod.yaml 
+kubectl delete -f pod.yaml 
+kubectl apply -f pod.yaml 
+# oder beim run ggf. volumes mitgeben
+```
+
 ```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nginx-deployment
-  namespace: default
-spec:
-  selector:
-    matchLabels:
-      app: nginx
-  replicas: 2 
-  template:
-    metadata:
-      labels:
-        app: nginx
-    spec:
-      containers:
-      - name: nginx
-        image: nginx:latest
-        ports:
-        - containerPort: 80
-        volumeMounts:
-            - name: nginx-index-file
-              mountPath: /usr/share/nginx/html/
-      volumes:
-      - name: nginx-index-file
-        configMap:
-          name: index-html-configmap
-```
-
-kubectl create configmap nginx-index-html-configmap --from-file=index.html -o yaml --dry-run
-cm:
-```
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: index-html-configmap
+  name: indexhtml
   namespace: default
 data:
   index.html: |
@@ -135,9 +111,29 @@ data:
     </html
 ```
 
-## Ingress controller / ingress
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webserver
+spec:
+  containers:
+  - name: webserver
+    image: nginx:latest
+    ports:
+    - containerPort: 80
+    volumeMounts:
+        - name: nginx-index-file
+          mountPath: /usr/share/nginx/html/
+  volumes:
+  - name: nginx-index-file
+    configMap:
+      name: indexhtml
+```
 
-Erstellen Sie einen ingress für den von Ihnen erstellten Service
+## Deployment
+
+Erstellen Sie ein Deployment des nginx pods mit 3 replicas. 
 
 ## rolebindings und Serviceaccounts
 
@@ -180,6 +176,10 @@ können die pods noch miteinander reden?
 
 warum ja/nein?
 was wäre der soll zustand? 
+
+## Ingress controller / ingress
+
+Erstellen Sie einen ingress für den von Ihnen erstellten Service
 
 ## init container
 
