@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  creationTimestamp: "2021-09-22T07:54:19Z"
+  labels:
+    kubernetes.io/metadata.name: training
+  name: schulung
+  resourceVersion: "10913"
+  uid: 8d79c759-dc5b-4cc3-9a49-a1bbc25d9de9
+spec:
+  finalizers:
+  - kubernetes
+status:
+  phase: Active

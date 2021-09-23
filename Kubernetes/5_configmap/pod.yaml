@@ -1,0 +1,115 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Pod","metadata":{"annotations":{},"creationTimestamp":"2021-09-22T08:09:10Z","labels":{"run":"nginx"},"name":"webserver","namespace":"schulung","resourceVersion":"11569","uid":"b1072a09-2c1b-49c9-acb6-4b48c8300f2b"},"spec":{"containers":[{"image":"nginx","imagePullPolicy":"Always","name":"nginx","ports":[{"containerPort":80,"protocol":"TCP"}],"resources":{},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","volumeMounts":[{"mountPath":"/var/run/secrets/kubernetes.io/serviceaccount","name":"kube-api-access-l9fqn","readOnly":true}]}],"dnsPolicy":"ClusterFirst","enableServiceLinks":true,"nodeName":"minikube","preemptionPolicy":"PreemptLowerPriority","priority":0,"restartPolicy":"Always","schedulerName":"default-scheduler","securityContext":{},"serviceAccount":"default","serviceAccountName":"default","terminationGracePeriodSeconds":30,"tolerations":[{"effect":"NoExecute","key":"node.kubernetes.io/not-ready","operator":"Exists","tolerationSeconds":300},{"effect":"NoExecute","key":"node.kubernetes.io/unreachable","operator":"Exists","tolerationSeconds":300}],"volumes":[{"name":"kube-api-access-l9fqn","projected":{"defaultMode":420,"sources":[{"serviceAccountToken":{"expirationSeconds":3607,"path":"token"}},{"configMap":{"items":[{"key":"ca.crt","path":"ca.crt"}],"name":"kube-root-ca.crt"}},{"downwardAPI":{"items":[{"fieldRef":{"apiVersion":"v1","fieldPath":"metadata.namespace"},"path":"namespace"}]}}]}}]},"status":{"conditions":[{"lastProbeTime":null,"lastTransitionTime":"2021-09-22T08:09:10Z","status":"True","type":"Initialized"},{"lastProbeTime":null,"lastTransitionTime":"2021-09-22T08:09:13Z","status":"True","type":"Ready"},{"lastProbeTime":null,"lastTransitionTime":"2021-09-22T08:09:13Z","status":"True","type":"ContainersReady"},{"lastProbeTime":null,"lastTransitionTime":"2021-09-22T08:09:10Z","status":"True","type":"PodScheduled"}],"containerStatuses":[{"containerID":"docker://9f0a5826960c79a1402d8dee671c5b04eb95d7d8aeb9334215ae0dfbd905a0fa","image":"nginx:latest","imageID":"docker-pullable://nginx@sha256:853b221d3341add7aaadf5f81dd088ea943ab9c918766e295321294b035f3f3e","lastState":{},"name":"nginx","ready":true,"restartCount":0,"started":true,"state":{"running":{"startedAt":"2021-09-22T08:09:12Z"}}}],"hostIP":"192.168.99.100","phase":"Running","podIP":"172.17.0.3","podIPs":[{"ip":"172.17.0.3"}],"qosClass":"BestEffort","startTime":"2021-09-22T08:09:10Z"}}
+  creationTimestamp: "2021-09-22T08:09:40Z"
+  labels:
+    run: nginx
+  name: webserver
+  namespace: schulung
+  resourceVersion: "25585"
+  uid: 143bdf7b-f1c2-49a6-93f5-df9a4c6a1000
+spec:
+  containers:
+  - image: nginx
+    imagePullPolicy: Always
+    name: nginx
+    ports:
+    - containerPort: 80
+      protocol: TCP
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-l9fqn
+      readOnly: true
+    - name: nginx-index-file
+      mountPath: /usr/share/nginx/html/
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  nodeName: minikube
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: default
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - name: kube-api-access-l9fqn
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 3607
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace
+  - name: nginx-index-file
+    configMap:
+      name: indexhtml
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2021-09-22T08:09:40Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2021-09-23T09:06:36Z"
+    status: "True"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2021-09-23T09:06:36Z"
+    status: "True"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2021-09-22T08:09:40Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: docker://737c3510a179020a10bf571178dd08ad89c59826f1128b43f7e3ef1772d15eae
+    image: nginx:latest
+    imageID: docker-pullable://nginx@sha256:853b221d3341add7aaadf5f81dd088ea943ab9c918766e295321294b035f3f3e
+    lastState:
+      terminated:
+        containerID: docker://186868d514bbedc284bad2821a3a21ebad729976895fd8eba1e327faa91e641f
+        exitCode: 255
+        finishedAt: "2021-09-23T09:05:50Z"
+        reason: Error
+        startedAt: "2021-09-22T11:22:52Z"
+    name: nginx
+    ready: true
+    restartCount: 2
+    started: true
+    state:
+      running:
+        startedAt: "2021-09-23T09:06:35Z"
+  hostIP: 192.168.99.100
+  phase: Running
+  podIP: 172.17.0.4
+  podIPs:
+  - ip: 172.17.0.4
+  qosClass: BestEffort
+  startTime: "2021-09-22T08:09:40Z"

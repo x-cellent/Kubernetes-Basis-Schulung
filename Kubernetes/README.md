@@ -9,6 +9,8 @@ use/install kubernetes:
 install minikube:
 https://www.virtualbox.org/wiki/Linux_Downloads => dpkg -i ...
 https://v1-18.docs.kubernetes.io/docs/tasks/tools/install-minikube/ => --driver=virtualbox
+minikube stop
+minikube start --driver=virtualbox
 
 install with kind:
 https://kind.sigs.k8s.io/
@@ -17,17 +19,27 @@ https://itnext.io/starting-local-kubernetes-using-kind-and-docker-c6089acfc1c0
 use online clusters:
 https://www.katacoda.com/
 
+präsentation & links:
+https://xctechnologies-my.sharepoint.com/:p:/g/personal/alexander_pilz_x-cellent_com/EZjp2tqIdylEoZrbeW1KsfkBeAz9nnRfzq1mM9cf6JnjRQ?e=WmtNnA
+
+https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#podspec-v1-core
+
 # Kubernetes cli & yaml
 
 ## Namespace
 
-Erstellen Sie einen namespace mit dem namen "training" per command line.
+Benötigte Befehle/verbs: create, get, apply, delete​
 
-Exportieren sie diesen Namespace als namespace.yaml datei.
+Erstellen Sie einen namespace mit dem namen "training" per command line.​
 
-Ändern sie darin den namen zu "schulung" 
+Exportieren sie diesen Namespace als namespace.yaml datei.​
 
-wenden sie diese datei an und löschen sie anschliesend den alten namespace
+Ändern sie darin den namen zu "schulung"​
+
+wenden sie diese datei an und löschen sie anschliesend den alten namespace​
+
+Schauen sie sich nun den folgenden Namespace an und Reperieren sie diesen: "tofix-namespace.yaml" (git)​
+Hinweis: namespace.yaml anschauen und vergleichen (oder dokumentation anschauen)
 
 ```
 kubectl create ns training
@@ -35,24 +47,29 @@ kubectl get -o yaml ns training > namespace.yaml
 vi namespace.yaml
 kubectl apply -f namespace.yaml
 kubectl get ns
-kubectl delete ns schullung
+kubectl delete ns training
 ```
 
-Schauen sie sich nun den folgenden Namespace an und Reperieren sie diesen
-tofix-namespace.yaml
-Hinweis: schaut euch den von euch erstellten NS an!
+Namespace.yaml fix: ​
+
+Diverse syntaxfehler. Können mit kubectl apply oder durch yaml linter genauer erkannt werden. 
 
 ## Pod
 
-Benötigte Befehle/verbs: create, get, apply, delete
-Erstellen Sie einen pod mit dem namen "nginx", der ein nginx image startet und auf port 80 lauscht. 
-Exportieren sie diesen pod als pod.yaml datei.
-Ändern sie darin den namen zu "webserver"
-wenden sie diese datei an und löschen sie wenn nötig anschliesend den alten pod "nginx".
+Benötigte Befehle/verbs: run, get, apply, delete​
+
+Erstellen Sie einen pod mit dem namen "nginx", der ein nginx image startet und auf port 80 lauscht. ​
+
+Exportieren sie diesen pod als pod.yaml datei.​
+
+Ändern sie darin den namen zu "webserver"​
+
+wenden sie diese datei an und löschen sie wenn nötig anschliesend den alten pod "nginx".​
+
 Schauen Sie sich nun den pod tofix-pod.yaml an. machen Sie diesen lauffähig.
 
 ```
-kubectl run -n schulung nginx --image=nginx --port=80 --dry-run -o yaml
+kubectl run -n schulung nginx --image=nginx --port=80 --dry-run -o yaml > pod.yaml 
 kubectl run -n schulung nginx --image=nginx --port=80
 kubectl get -n schulung -o yaml pod nginx > pod.yaml
 vi pod.yaml
@@ -61,14 +78,22 @@ kubectl get pods -n schulung
 kubectl delete pod -n schulung nginx
 ```
 
+pod.yaml fix: ​
+
+Diverse syntaxfehler. Können mit kubectl apply oder durch yaml linter genauer erkannt werden.
+
 ## Service
 
-Benötigte Befehle: expose, get, apply, delete
+Benötigte Befehle: expose, get 
 Erstellen Sie einen Service mit dem namen "nginx", der auf port 8080 lauscht und auf den zuvor erstellten pod loadbalanced. 
 Hinweis: ggf. muss der pod um Labels erweitert werden!
+Ändern sie darin den namen zu "webserver".
 
 ```
-kubectl expose pod webserver -n schulung --port=8080 --target-port=80 --type=ClusterIP
+kubectl expose pod webserver -n schulung --port=8080 --target-port=80 --type=ClusterIP --dry-run -o yaml
+kubectl expose pod webserver -n schulung --port=8080 --target-port=80 --type=ClusterIP 
+kubectl get service -n schulung
+kubectl get pod -n schulung -o wide
 ```
 
 ## Port Forward
@@ -88,14 +113,32 @@ Erstellen Sie eine Configmap mit einer Index.html datei und nutzen sie diese im 
 Hinweis: editieren sie hierfür nach der erstellung der configmap eine pod.yaml, und erweiter sie diesen um "volumeMounts" und "volumes".
 
 ```bash
+kubectl create cm -n schulung indexhtml --from-file ./Kubernetes-Basis-Schulung/Kubernetes/5_configmap/index.html
 kubectl create cm -n schulung indexhtml --from-file index.html
-kubectl run -n schulung nginx --image=nginx --port=80 --dry-run -o yaml >pod.yaml 
+kubectl get -o yaml pod -n schulung webserver >pod.yaml 
 vi pod.yaml 
 kubectl delete -f pod.yaml 
 kubectl apply -f pod.yaml 
 # oder beim run ggf. volumes mitgeben
 ```
 
+```yaml
+    volumeMounts:
+        - name: nginx-index-file
+          mountPath: /usr/share/nginx/html/
+  volumes:
+  - name: nginx-index-file
+    configMap:
+      name: indexhtml
+```
+
+    volumeMounts:
+        - name: nginx-index-file
+          mountPath: /usr/share/nginx/html/
+  volumes:
+  - name: nginx-index-file
+    configMap:
+      name: indexhtml
 ```yaml
 apiVersion: v1
 kind: ConfigMap
@@ -135,51 +178,105 @@ spec:
 
 Erstellen Sie ein Deployment des nginx pods mit 3 replicas. 
 
-## rolebindings und Serviceaccounts
+Commands: create, get, apply
+Ressources: deployment
+Erstellen Sie ein Deployment des nginx pods mit 3 replicas. 
+Hinweis: plain deployment yaml file erstellen und mit der pod.yaml anpassen
 
-Erstellen Sie einen Serviceaccount
+```bash
+kubectl create deployment -n schulung webserver --image=nginx --dry-run -o yaml > deployment.yaml
+vi deployment.yaml 
+# auf replicas, label, ns und volume mounts achten
+kubectl delete -f deployment.yaml 
+kubectl apply -f deployment.yaml 
+kubectl apply -f deployment.yaml 
+kubectl apply -f ./Kubernetes-Basis-Schulung/Kubernetes/6_deployment/deployment.yaml
+```
 
-Ändern Sie das Deployment ab, das es diesen neuen Serviceaccount nutzt. 
-Was sehen sie? kann der SA den pod erstellen?
-todo: selber nochmal testen. 
+## Serviceaccounts
 
-Erstellen sie eine rolle, die folgende rechte hat:
-....
+Erstelle einen SA zu der applikation, der  von dieser genutzt wird.
 
-Erstellen sie Ein rolebinding, das dem serviceaccount die oben erstellten rechte gibt
+```bash
+kubectl create sa -n schulung webserver --dry-run -o yaml > sa.yaml
+kubectl create sa -n schulung webserver
+vi deployment.yaml 
+kubectl delete -f deployment.yaml 
+kubectl apply -f deployment.yaml 
+kubectl apply -f ./Kubernetes-Basis-Schulung/Kubernetes/7_sa/deployment.yaml
+```
 
-Kann das deployment nun erzeigt werden?
+## Rolebindings 
+
+Welche rechte hat der für die app erstellte serviceaccount? Wie können sie sich das anzeigen? Kann er pods erstellen(create)?​
+
+Erstellen sie einen neuen serviceaccount "cirobot"​
+
+Erstelle eine clusterrole, die die gleichen rechte wie die clusterrole "admin" hat. ​
+
+Erstellen Sie ein dazugehöriges rolebinding von dieser rolle zu dem serviceaccount.​
+
+Ist das so in der praxis ein gutes vorgehen? Warum?
+
+Wie kann man überprüfen ob der sa nun z.b. pods erstellen darf?
+
+1)
+```bash
+kubectl auth can-i -n schulung 'create' 'pod' --as=system:serviceaccount:schulung:webserver​
+kubectl auth can-i -n schulung 'get' '/healthz' --as=system:serviceaccount:schulung:webserver​
+kubectl auth can-i 'create' 'pod' -n schulung ​
+K get clusterrolebindings [-o yaml] [name]​
+K get rolebindings –n default [-o yaml] [name]
+
+# alle ausgeben fpr webserver
+kubectl get rolebinding,clusterrolebinding --all-namespaces -o jsonpath='{range .items[?(@.subjects[0].name=="webserver")]}[{.roleRef.kind},{.roleRef.name}]{end}'
+
+# alle für serviceaccounts
+kubectl get clusterrolebindings -o json | jq -r '
+  .items[] | 
+  select(
+    .subjects // [] | .[] | 
+    [.kind,.name] == ["Group","system:serviceaccounts"]
+  ) |
+  .metadata.name'
+
+# alle authenticated
+kubectl get clusterrolebindings -o json | jq -r '
+  .items[] | 
+  select(
+    .subjects // [] | .[] | 
+    [.kind,.name] == ["Group","system:authenticated"]
+  ) |
+  .metadata.name'
+
+```
+
+2) 
+```bash
+kubectl create sa -n schulung cirobot
+kubectl get clusterrole admin -o yaml > cr.yaml
+vi cr.yaml
+# namen ändern, nicht benötigtes löschen
+kubectl apply -f cr.yaml
+kubectl create rolebinding -n schulung myadmin --clusterrole=myadmin --serviceaccount=schulung:cirobot
+# nein und ja. grundsetzlich ist es gut, aber der sa hat zu viele rechte. sollte nur die rechte haben die man für das deployment braucht und nur in diesem NS 
+kubectl auth can-i -n schulung 'create' 'pod' --as=system:serviceaccount:schulung:cirobot
+```
+
 
 ## pod security policy
 
 Erstellen sie eine restriktive psp und eine sehr offene PSP.
 
-Erstellen sie 2 serviceaccounts.
+Die restriktive psp geben sie per default allen.
 
-dem einen geben sie das "use" recht auf die eine psp, dem anderen auf die andere psp. 
+Lässt sich der pod nun starten?
 
-ändern sie nun das nginx deployment in priveliged um. 
+dem mit deployten sa geben sie die offene psp
 
-können sie es mit beiden starten? kommen die pods hoch?
+Lässt sich der pod nun starten?
 
 
-## loadbalancer / proxy erstellen
-
-erstellen sie einen 2. container(in einem deployment). dieser soll ein webserver sein, der einfach eine weiterleitung auf den beretis erstellten nginx macht. 
-Ebenfalls soll ein service hierfür angelegt werden. 
-
-## networkpolicys
-
-Erstellen sie eine Sehr restriktive networkpolicy für diesen namespace. 
-
-können die pods noch miteinander reden?
-
-warum ja/nein?
-was wäre der soll zustand? 
-
-## Ingress controller / ingress
-
-Erstellen Sie einen ingress für den von Ihnen erstellten Service
 
 ## init container
 
@@ -236,3 +333,19 @@ Gemeinsames anschauen von z.b. bitnami helmcharts
 Machen sie das helmchart im ordner "defektes-helmchart" wieder lauffähig. 
 (syntax fehler, fehlende configs, falsche variablennamen, schreibfehler, ...)
 
+## ingress controller helm chart
+
+Deployen sie ein nginx ingress controller helm chart
+
+## ingress
+
+Erstellen Sie einen ingress für den von Ihnen erstellten Service
+
+## networkpolicys
+
+Erstellen sie eine Sehr restriktive networkpolicy für diesen namespace. 
+
+können die pods noch miteinander reden?
+
+warum ja/nein?
+was wäre der soll zustand? 
