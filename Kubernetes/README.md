@@ -10,7 +10,9 @@ install minikube:
 https://www.virtualbox.org/wiki/Linux_Downloads => dpkg -i ...
 https://v1-18.docs.kubernetes.io/docs/tasks/tools/install-minikube/ => --driver=virtualbox
 minikube stop
-minikube start --driver=virtualbox
+# minikube delete
+# wait
+minikube start --driver=virtualbox --network-plugin=cni --enable-default-cni
 
 install with kind:
 https://kind.sigs.k8s.io/
@@ -343,7 +345,7 @@ curl localhost:8080
 
 Gemeinsames anschauen von z.b. bitnami helmcharts
 
-## Kaputtes helm chart reperieren
+## Kaputtes helm chart reperieren (optional)
 
 Machen sie das helmchart im ordner "defektes-helmchart" wieder lauffähig. 
 (syntax fehler, fehlende configs, falsche variablennamen, schreibfehler, ...)
@@ -352,15 +354,57 @@ Machen sie das helmchart im ordner "defektes-helmchart" wieder lauffähig.
 
 Deployen sie ein nginx ingress controller helm chart
 
+Erstellen sie einen ingress
+
+schauen sie nun mit einem port forward auf den ingress controller, ob die fverbindung richtig erfolgt
+
 ## ingress
 
 Erstellen Sie einen ingress für den von Ihnen erstellten Service
+https://github.com/bitnami/charts/tree/master/bitnami/nginx-ingress-controller
+https://github.com/kubernetes/ingress-nginx
+https://docs.nginx.com/nginx-ingress-controller/installation/installation-with-helm/
+https://kubernetes.github.io/ingress-nginx/deploy/
+minikube addons enable ingress
+
+```bash
+kubectl create ns schulung2
+kubectl apply -f ./Kubernetes-Basis-Schulung/Kubernetes/10_ingress/ingress.yaml 
+
+helm install -n schulung2 webserver2 ./Kubernetes-Basis-Schulung/Kubernetes/9_helm/webserver2/
+
+minikube addons enable ingress
+
+kubectl port-forward -n ingress-nginx service/ingress-nginx-controller 8080:80
+curl localhost:8080
+
+```
 
 ## networkpolicys
 
-Erstellen sie eine Sehr restriktive networkpolicy für diesen namespace. 
+Erstellen sie eine Sehr restriktive networkpolicy für diesen namespace. (deny all)
 
 können die pods noch miteinander reden?
 
 warum ja/nein?
 was wäre der soll zustand? 
+
+Erstellen sie nun eine regel die diese 1 verbindung erlaubt (nginxingress => webserver pod bzw. service)
+
+https://kubernetes.io/docs/tasks/administer-cluster/network-policy-provider/_print/
+https://kubernetes.io/docs/tasks/administer-cluster/network-policy-provider/_print/#pg-95039241255a31df196beaa405b68eba
+
+```bash
+curl -LO https://github.com/cilium/cilium-cli/releases/latest/download/cilium-linux-amd64.tar.gz
+sudo tar xzvfC cilium-linux-amd64.tar.gz /usr/local/bin
+rm cilium-linux-amd64.tar.gz
+cilium uninstall
+cilium install
+ggf. delete all pods
+
+kubectl apply -n schulung2 -f ./Kubernetes-Basis-Schulung/Kubernetes/11_networkpolicy/np-deny-all-ingress.yaml
+kubectl apply -n schulung2 -f ./Kubernetes-Basis-Schulung/Kubernetes/11_networkpolicy/allow-web-ingress.yaml
+
+kubectl port-forward -n ingress-nginx service/ingress-nginx-controller 8080:80
+curl localhost:8080
+```
