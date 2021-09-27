@@ -264,20 +264,6 @@ kubectl auth can-i -n schulung 'create' 'pod' --as=system:serviceaccount:schulun
 ```
 
 
-## pod security policy
-
-Erstellen sie eine restriktive psp und eine sehr offene PSP.
-
-Die restriktive psp geben sie per default allen.
-
-Lässt sich der pod nun starten?
-
-dem mit deployten sa geben sie die offene psp
-
-Lässt sich der pod nun starten?
-
-
-
 ## init container
 
 erstellen sie einen init container, der einfach das gleiche volume mountet, und dort nochmal eine zeile hinzufügt, z.b. "init war hier".
@@ -304,6 +290,9 @@ https://medium.com/bb-tutorials-and-thoughts/kubernetes-learn-sidecar-container-
 Erstellen sie ein default Helm repo
 Schauen sie sich den aufbau und die funktuionsweise an
 
+```bash
+helm create webserver
+```
 ## Templates kopieren
 
 Kopieren sie die gesamte derzeitige applikation in den Templates ordner und löschen sie die davor darin vorhandenen dateien. 
@@ -315,6 +304,16 @@ proxy deployment
 
 instalieren sie nun dieses helmchart in das cluster
 
+```bash
+kubectl delete ns schulung
+kubectl delete ClusterRole myadmin
+kubectl create ns schulung
+kubectl get pods -n schulung
+helm install -n schulung webserver1 ./Kubernetes-Basis-Schulung/Kubernetes/9_helm/webserver1/
+kubectl get pods -n schulung
+kubectl port-forward -n schulung service/webserver -n schulung 8080:8080
+curl localhost:8080
+```
 ## variablen in values rausziehen
 
 Versuchen sie nun die applikation die sie in diesem helmchart verpackt haben, konfigurierbar zu machen. 
@@ -323,6 +322,22 @@ der hostname des ingress objektes
 die images der pods 
 ob eine networkpolicy mitdeployed werden soll
 ob der ingress mitdeployed werden soll
+
+Hinweis: ggf. nochmal helm create und die meisten sachen so lassen, nur anpassen
+
+```bash
+kubectl delete ns schulung2
+kubectl create ns schulung2
+helm delete webserver2
+
+kubectl get pods -n schulung2
+helm install -n schulung2 webserver2 ./Kubernetes-Basis-Schulung/Kubernetes/9_helm/webserver2/
+kubectl get pods -n schulung2
+
+kubectl port-forward -n schulung2 service/webserver2 8080:80
+curl localhost:8080
+
+```
 
 ## Weitere helm charts reviewn
 
