@@ -10,8 +10,8 @@ install minikube:
 https://www.virtualbox.org/wiki/Linux_Downloads => dpkg -i ...
 https://v1-18.docs.kubernetes.io/docs/tasks/tools/install-minikube/ => --driver=virtualbox
 minikube stop
-# minikube delete
-# wait
+#minikube delete
+#wait
 minikube start --driver=virtualbox --network-plugin=cni --enable-default-cni
 
 install with kind:
