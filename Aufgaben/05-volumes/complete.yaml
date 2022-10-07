@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: schulung
+---
+apiVersion: v1
+data:
+  index.html: |
+    <!DOCTYPE html>
+
+    <html>
+    <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+      <title>Mein Nginx!</title>
+      <LINK href="styles.css" rel="stylesheet" type="text/css">
+    </head>
+
+    <body>
+
+    Das ist meine neue Webseite!
+
+    </body>
+    </html>
+kind: ConfigMap
+metadata:
+  name: indexhtml
+  namespace: schulung
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: webserver
+  name: webserver
+  namespace: schulung
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    ports:
+    - containerPort: 80
+    volumeMounts:
+    - name: indexhtml-volume
+      mountPath: /usr/share/nginx/html/​
+  volumes:
+    - name: indexhtml-volume
+      configMap:
+        name: indexhtml  
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: webserver
+  name: nginx
+  namespace: schulung
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 80
+  selector:
+    run: webserver
+  sessionAffinity: None
+  type: ClusterIP
