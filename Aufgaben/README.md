@@ -1,36 +1,39 @@
 
 # Vorbereitung:
 
-Cheatsheet: https://kubernetes.io/docs/reference/kubectl/cheatsheet/
+## Dokumentation
 
-kubectl docu: https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#run
+API Reference:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/
 
-use/install kubernetes:
+Overview:https://kubernetes.io/docs/concepts/overview/
 
-install minikube:
+Kubectl Cheat Sheet: https://kubernetes.io/docs/reference/kubectl/cheatsheet/
 
-https://www.virtualbox.org/wiki/Linux_Downloads => dpkg -i ...
+kubectl Reference: https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#run
 
-https://v1-18.docs.kubernetes.io/docs/tasks/tools/install-minikube/ => --driver=virtualbox
+## Lab Setup
 
+kind (Kubernetes in Docker):
 ```
-minikube stop
-#minikube delete
-#wait
-minikube start --driver=virtualbox --network-plugin=cni --enable-default-cni
+curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.17.0/kind-linux-amd64
+chmod +x ./kind
+sudo mv ./kind /usr/local/bin/kind
 ```
 
-install with kind:
+New Cluster:
+```
+kind create cluster --config ./kind/kind-standard/kind-cluster-config.yaml # new cluster
+```
 
-https://kind.sigs.k8s.io/
-https://itnext.io/starting-local-kubernetes-using-kind-and-docker-c6089acfc1c0
+Kubectl:
+```
+curl -LO https://dl.k8s.io/release/v1.26.0/bin/linux/amd64/kubectl
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+source <(kubectl completion bash) # setup autocomplete 
+echo "source <(kubectl completion bash)" >> ~/.bashrc # add autocomplete permanently
+```
 
-use online clusters:
-
-https://www.katacoda.com/
-
-präsentation & links:
-
-https://xctechnologies-my.sharepoint.com/:p:/g/personal/alexander_pilz_x-cellent_com/EZjp2tqIdylEoZrbeW1KsfkBeAz9nnRfzq1mM9cf6JnjRQ?e=WmtNnA
-
-https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#podspec-v1-core
+Verification:
+```
+kubectl version --short
+```
