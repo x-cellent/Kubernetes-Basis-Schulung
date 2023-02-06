@@ -22,7 +22,7 @@ sudo mv ./kind /usr/local/bin/kind
 
 New Cluster:
 ```
-kind create cluster --config ./kind/kind-standard/kind-cluster-config.yaml # new cluster
+kind create cluster --config ../kind/kind-standard/kind-cluster-config.yaml # new cluster
 ```
 
 Kubectl:
