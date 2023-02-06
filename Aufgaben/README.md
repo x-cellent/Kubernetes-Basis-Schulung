@@ -3,9 +3,9 @@
 
 ## Dokumentation
 
-API Reference:https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/
+API Reference: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/
 
-Overview:https://kubernetes.io/docs/concepts/overview/
+Overview: https://kubernetes.io/docs/concepts/overview/
 
 Kubectl Cheat Sheet: https://kubernetes.io/docs/reference/kubectl/cheatsheet/
 
