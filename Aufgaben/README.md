@@ -43,4 +43,12 @@ Kustomize Version: v4.5.7
 Server Version: v1.25.3
 ```
 
+# Troubleshooting
+
+Falls der Herunterladen von Container Images aus dem kind Cluster nicht möglich ist, dann es lokal laden und in den kind Cluster übertragen.
+
+```
+docker pull nginx:1.23
+kind load docker-image nginx:1.23
+```
 

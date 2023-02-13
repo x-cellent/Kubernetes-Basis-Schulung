@@ -1,3 +1,3 @@
-kubectl port-forward -n schulung service/webserver -n schulung 8080​
+Benötigte Befehle: kubectl port-forward
 
-curl localhost:8080​
+1. "forwarden" Sie den Service nach localhost und greifen Sie darauf zu (z.B. mit curl)
