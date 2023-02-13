@@ -15,7 +15,7 @@ kubectl Reference: https://kubernetes.io/docs/reference/generated/kubectl/kubect
 
 kind (Kubernetes in Docker) installieren:
 ```
-curl -LO kind https://kind.sigs.k8s.io/dl/v0.17.0/kind-linux-amd64
+curl -LO https://kind.sigs.k8s.io/dl/v0.17.0/kind-linux-amd64
 sudo install -o root -g root -m 0755 kind-linux-amd64 /usr/local/bin/kind
 ```
 
