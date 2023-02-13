@@ -1,8 +1,8 @@
 apiVersion: v1
-kind: Namespace
+kind: namespace
 metadata:
   annotations:
-    test: "true"
+  test="true"
   labels:
      app: nginx_-2
-  name: namespace-der-bessere
+  name: namespace der bessere
