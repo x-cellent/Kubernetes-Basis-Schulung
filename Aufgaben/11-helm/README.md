@@ -1,4 +1,4 @@
-1. Install helm binary
+1. Installiere Helm mit `bash get_helm.sh`
 2. Helm Chart aus den derzeitigen Objekten erstellen
    - Webserver deployment + (sidecar) + (init)
    - Service
