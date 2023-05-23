@@ -11,7 +11,7 @@ Kubectl Cheat Sheet: https://kubernetes.io/docs/reference/kubectl/cheatsheet/
 
 kubectl Reference: https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#run
 
-## Lab Setup
+## kubectl Setup
 
 * [Install kubectl on Linux](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-kubectl-on-linux)
 * [Enable Shell Autocompletion on Linux](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#enable-shell-autocompletion)
