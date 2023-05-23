@@ -13,42 +13,20 @@ kubectl Reference: https://kubernetes.io/docs/reference/generated/kubectl/kubect
 
 ## Lab Setup
 
-kind (Kubernetes in Docker) installieren:
-```
-curl -LO https://kind.sigs.k8s.io/dl/v0.17.0/kind-linux-amd64
-sudo install -o root -g root -m 0755 kind-linux-amd64 /usr/local/bin/kind
-```
+* [Install kubectl on Linux](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-kubectl-on-linux)
+* [Enable Shell Autocompletion on Linux](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#enable-shell-autocompletion)
 
-Lokalen Cluster erstellen:
-```
-kind create cluster --config cluster-config.yaml
-```
+* [Install kubectl on macOS](https://v1-24.docs.kubernetes.io/docs/tasks/tools/install-kubectl-macos/#install-kubectl-on-macos)
+* [Enable Shell Autocompletion on macOS](https://v1-24.docs.kubernetes.io/docs/tasks/tools/install-kubectl-macos/#enable-shell-autocompletion)
 
-Kubectl installieren:
-```
-curl -LO https://dl.k8s.io/release/v1.26.1/bin/linux/amd64/kubectl
-sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-```
+* [Install kubectl on Windows](https://v1-24.docs.kubernetes.io/docs/tasks/tools/install-kubectl-windows/#install-kubectl-on-windows)
+* [Enable Shell Autocompletion on Windows](https://v1-24.docs.kubernetes.io/docs/tasks/tools/install-kubectl-windows/#enable-shell-autocompletion)
 
-bash Autovervollständigung einrichten:
+Wenn alles richtig installiert wurde, sollte `kubectl version --short` folgendes zurückgeben:
 ```
-source <(kubectl completion bash)
-echo "source <(kubectl completion bash)" >> ~/.bashrc
+kubectl version --short
+Flag --short has been deprecated, and will be removed in the future. The --short output will become the default.
+Client Version: v1.27.1
+Kustomize Version: v5.0.1
+The connection to the server localhost:8080 was refused - did you specify the right host or port?
 ```
-
-Wenn alles richtig konfiguriert wurde, sollte `kubectl version --short` folgendes zurückgeben:
-```
-Client Version: v1.26.1
-Kustomize Version: v4.5.7
-Server Version: v1.25.3
-```
-
-# Troubleshooting
-
-Falls der Herunterladen von Container Images aus dem kind Cluster nicht möglich ist, dann es lokal laden und in den kind Cluster übertragen.
-
-```
-docker pull nginx:1.23
-kind load docker-image nginx:1.23
-```
-

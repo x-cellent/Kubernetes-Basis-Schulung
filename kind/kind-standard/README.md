@@ -1,1 +1,0 @@
-# Unsere Default kind-Config fuer die Uebungen
